@@ -1,13 +1,16 @@
 const auth = require('../../auth')
 const User = require('../../models/user.model')
-const passport = require('passport')
 const route = require('express').Router()
 
-route.get('', auth.required, async (req, res, next) => {
+route.get('', async (req, res, next) => {
+    if (!auth.requireToken(req)) return res.status(404).json({ 'errors': "Invalid token" })
+
+    const { id, userNmae } = auth.requireToken(req)
     try {
-        const user = await User.findById(req.payload.id)
+        const { email, password } = req.body.user
+        const user = await User.findById(id)
         if (!user) return res.sendStatus(404)
-        return res.json({ user: user.toAuthJson() })
+        return res.json({ user: user.toAuthJSON() })
     } catch (error) {
         next(error)
     }
@@ -20,32 +23,58 @@ route.post('', async (req, res, next) => {
         const user = await User({ userName, email })
         await user.setPassword(password)
         await user.save()
-        console.log('-------------------------------------------')
-        console.log(user)
+
         return res.json({ user: user.toAuthJSON() })
     } catch (error) {
         next(error)
     }
 })
 
-// route.post('/login', (req, res, next) => {
-//     if (!req.body.user.email) {
-//         return res.status(422).json({ errors: { email: "can't be blank" } });
-//     }
+route.post('/login', async (req, res, next) => {
+    const { email, password } = req.body.user
+    if (!email) {
+        return res.status(400).json({ errors: { email: "can't be blank" } });
+    }
 
-//     if (!req.body.user.password) {
-//         return res.status(422).json({ errors: { password: "can't be blank" } });
-//     }
-//     passport.authenticate('local', { session: false }, (err, user, info) => {
-//         if (err) return next(err)
+    if (!password) {
+        return res.status(400).json({ errors: { password: "can't be blank" } });
+    }
+    const data = await auth.checkUser(email, password)
 
-//         if (user) {
-//             user.token = user.generateJWT()
-//             return res.json({ user: user.toAuthJson() })
-//         } else {
-//             return res.status(422).json(info);
-//         }
-//     })
-// })
+    if (!data) return res.status(400).json({ errors: "email or passowd are wrong" })
+    return res.json({ user: data })
+})
+
+route.put('', async (req, res, next) => {
+    const authChecking = auth.requireToken(req)
+    if (!authChecking) return res.status(404).json({ 'errors': "Invalid token" })
+
+    const { id } = authChecking
+    const { userName, email, password, bio, img } = req.body.user
+    try {
+        const user = await User.findById(id)
+        console.log(user)
+        if (userName) {
+            user.userName = userName
+        }
+        if (email) {
+            user.email = email
+        }
+        if (bio) {
+            user.bio = bio
+        }
+        if (img) {
+            user.img = img
+        }
+        if (password) {
+            await user.setPassword(password)
+        }
+        await user.save()
+        return res.json({ "user": user.toAuthJSON() })
+    } catch (error) {
+        next(error)
+    }
+
+})
 
 module.exports = route

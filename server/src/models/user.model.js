@@ -23,7 +23,7 @@ const userSchema = new Schema({
     },
     hash: String,
     bio: String,
-    Img: String,
+    img: String,
     favorite: [{ type: ObjectId, ref: 'Post' }],
     following: [{ type: ObjectId, ref: 'User' }],
 }, {
@@ -37,7 +37,7 @@ userSchema.methods.setPassword = async function (password) {
 }
 
 userSchema.methods.validatePassword = async function (password) {
-    return await bcrypt.compare(password, this.hash)
+    return await bcrypt.compare(password.toString(), this.hash)
 }
 
 userSchema.methods.generateJWT = function () {
@@ -55,5 +55,32 @@ userSchema.methods.toAuthJSON = function () {
         image: this.image
     };
 }
+
+userSchema.methods.toProfileJSON = function (user) {
+    return {
+        userName: this.userName,
+        bio: this.bio,
+        image: this.image || 'https://static.productionready.io/images/smiley-cyrus.jpg',
+        following: user ? user.isFollowing(this._id) : false
+    }
+}
+userSchema.methods.isFollowing = function (id) {
+    return this.following.some((followId) => followId.toString() === id.toString());
+};
+userSchema.methods.follow = function (id) {
+    if (this.following.indexOf(id) === -1) {
+        this.following.push(id);
+        return this.save();
+    }
+
+};
+userSchema.methods.unfollow = function (id) {
+    // console.log(this.following.some(followId => followId.equals(id)))
+    if (this.following.some(followId => followId.equals(id))) {
+        this.following = this.following.filter(followId => !followId.equals(id))
+        return this.save()
+    }
+}
+
 
 module.exports = model('User', userSchema)
