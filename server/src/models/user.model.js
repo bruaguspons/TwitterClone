@@ -82,5 +82,4 @@ userSchema.methods.unfollow = function (id) {
     }
 }
 
-
-module.exports = model('User', userSchema)
+model('User', userSchema)

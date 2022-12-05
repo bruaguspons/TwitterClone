@@ -1,5 +1,5 @@
 const auth = require('../../auth')
-const User = require('../../models/user.model')
+const User = require('mongoose').model('User')
 const route = require('express').Router()
 
 route.param('userName', async (req, res, next, userName) => {

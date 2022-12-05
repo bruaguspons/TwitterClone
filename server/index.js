@@ -2,8 +2,10 @@ const express = require('express')
 const cors = require('cors')
 const { connect } = require('mongoose')
 require('dotenv').config()
+require('./src/models/index.models').models()
 const RouteUser = require('./src/routes/user/user.routes')
 const RouteProfile = require('./src/routes/profile/profile.routes')
+const RoutePosts = require('./src/routes/post/post.routes')
 
 const app = express()
 app.use(cors())
@@ -12,6 +14,7 @@ app.use(express.json());
 
 app.use('/user', RouteUser)
 app.use('/profile', RouteProfile)
+app.use('/posts', RoutePosts)
 
 app.use((err, req, res, next) => {
     res.status(err.status || 404).json({

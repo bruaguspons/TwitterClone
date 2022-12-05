@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const secret = process.env.secret || '123'
-const User = require('./models/user.model')
+const User = require('mongoose').model('User')
 
 
 const getTokenFromHeader = (req) => {
