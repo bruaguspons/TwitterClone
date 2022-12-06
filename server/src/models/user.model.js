@@ -60,7 +60,7 @@ userSchema.methods.toProfileJSON = function (user) {
     return {
         userName: this.userName,
         bio: this.bio,
-        image: this.image || 'https://static.productionready.io/images/smiley-cyrus.jpg',
+        image: this.image,
         following: user ? user.isFollowing(this._id) : false
     }
 }

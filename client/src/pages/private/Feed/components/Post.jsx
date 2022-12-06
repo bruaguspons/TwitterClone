@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import privateRoutes from '../../../../routes/private.routes'
 import { getDateDiff, getDay } from '../../../../utils/getDate'
-import { FaTrash } from 'react-icons/fa'
+import { FaTrash, FaUserAlt } from 'react-icons/fa'
 import { usePostContext } from '../context/postContext'
 function Post({ post }) {
     const { posts, setPosts } = usePostContext()
@@ -38,9 +38,21 @@ function Post({ post }) {
                 }
 
 
-                <p className="py-1 line-clamp-6 mb-3 overflow-hidden leading-relaxed text-gray-000 cursor-pointer">{post?.content || ''}</p>
+                <button className='flex m-3 items-center gap-3' onClick={() => navigate(`/${privateRoutes.PRIVATE}/${privateRoutes.PROFILE}/${post.author.userName}`, { replace: true })}>
+                    {
+                        post.author.image ? <img src={`http://localhost:8000/${post.author.image}`} alt="" /> :
+                            <div className='bg-slate-200 p-3 rounded-full'><FaUserAlt className='w-8 h-8 md:w-5 md:h-5  ' /></div>
+                    }
+                    <span>{post.author.userName}</span>
+                </button>
 
-                <img className="lg:h-48 md:h-44 w-full object-scale-down object-center" src="https://fancytailwind.com/static/9e8be5587c42e1f7ebec77c5a333a3a4/17574/city2.webp" alt="blog" />
+
+
+
+                <p className="py-1 line-clamp-6 mb-3 overflow-hidden leading-relaxed text-gray-000 cursor-pointer">{post?.content || ''}</p>
+                {
+                    post.image && <img className="lg:h-48 md:h-44 w-full object-scale-down object-center" src={`http://localhost:8000/${post.image}`} alt="Post-Image" />
+                }
 
                 {/* :CARD FOOTER */}
                 <div className="pt-1 pb-4 flex justify-between items-center flex-wrap">

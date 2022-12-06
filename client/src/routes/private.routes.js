@@ -3,4 +3,5 @@ export default {
     "FEED": "feed",
     "CREATEPOST": "create-post",
     "POST": "post",
+    "PROFILE": 'profile'
 }

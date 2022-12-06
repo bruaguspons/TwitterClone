@@ -53,7 +53,7 @@ route.put('', async (req, res, next) => {
     const { userName, email, password, bio, img } = req.body.user
     try {
         const user = await User.findById(id)
-        console.log(user)
+
         if (userName) {
             user.userName = userName
         }

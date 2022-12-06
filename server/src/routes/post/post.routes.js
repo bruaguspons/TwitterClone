@@ -5,6 +5,18 @@ const User = require('mongoose').model('User')
 const Post = require('mongoose').model('Post')
 const Comment = require('mongoose').model('Comment')
 
+const multer = require('multer')
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images/')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname)
+    },
+})
+const update = multer({ storage: storage })
+
+
 route.param('post', async (req, res, next, slug) => {
     try {
 
@@ -68,15 +80,15 @@ route.get('/feed', async (req, res, next) => {
 
 })
 // create new post
-route.post('/', async (req, res, next) => {
+route.post('/', update.single('file'), async (req, res, next) => {
     const authChecking = auth.requireToken(req)
     if (!authChecking) return res.status(404).json({ 'errors': "Invalid token" })
 
     const { id } = authChecking
     const user = await User.findById(id)
-    const post = Post(req.body.post)
+    const post = Post({ ...JSON.parse(req.body.content).post, image: req.file?.path })
     post.author = user._id;
-    console.log(user.userName)
+
     post.authorName = user.userName
     await post.save()
     return res.json({ post: await post.toJSON() })
@@ -107,7 +119,7 @@ route.post('/:post/comments', async (req, res, next) => {
     const { id } = authChecking
     const user = await User.findById(id)
     const comment = await Comment(req.body)
-    console.log(comment)
+
     comment.author = user._id
     comment.post = req.post._id
     await comment.save()

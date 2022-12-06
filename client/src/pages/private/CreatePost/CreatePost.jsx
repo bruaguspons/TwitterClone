@@ -12,25 +12,31 @@ function CreatePost() {
     const user = useSelector(state => state.user)
     const handleSubmit = async (e) => {
         e.preventDefault()
+        console.log()
+        const data = new FormData()
+        data.append('file', refImage.current.files[0])
+        data.append('content', JSON.stringify({
+            post: {
+                content: refContent.current.value,
+                // password: refPass.current.value
+            }
+        }))
         const res = await fetch('http://localhost:8000/posts', {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 'Authorization': `Bearer ${user.token}`
             },
-            body: JSON.stringify({
-                post: {
-                    content: refContent.current.value,
-                    // password: refPass.current.value
-                }
-            })
+            body: data
         })
         if (res.status === 200) {
+            const datass = await res.json()
+            console.log(datass)
             navigate('/')
         } else {
             e.target.reset()
         }
     }
+
     return (
         <div className='w-full flex items-center justify-center'>
             <div className='w-max mx-auto  bg-slate-50 rounded-md py-6 px-4 text-center shadow-lg'>

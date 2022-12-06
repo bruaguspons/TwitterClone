@@ -6,6 +6,7 @@ import { PostProvider } from './Feed/context/postContext'
 import Feed from './Feed/Feed'
 import PostInfo from './Feed/PostInfo'
 import Navbar from './Navbar'
+import Profile from './profile/Profile'
 
 function Private() {
     return (
@@ -18,6 +19,7 @@ function Private() {
                         <Route path={privateRoutes.FEED} element={<Feed />} />
                         <Route path={privateRoutes.CREATEPOST} element={<CreatePost />} />
                         <Route path={`${privateRoutes.POST}/:slug`} element={<PostInfo />} />
+                        <Route path={`${privateRoutes.PROFILE}/:userprofile`} element={<Profile />} />
                     </Routes>
                 </PostProvider>
             </div>

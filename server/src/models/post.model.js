@@ -11,6 +11,7 @@ const postSchema = new Schema({
     comments: [{ type: ObjectId, ref: 'Comment' }],
     authorName: String,
     author: { type: ObjectId, ref: 'User' },
+    image: String
 }, {
     timestamps: true,
 })
@@ -32,7 +33,8 @@ postSchema.methods.toJSON = async function () {
         tagList: this.tagList,
         // favorited: user ? user.isFavorite(this._id) : false,
         favoritesCount: this.favoritesCount,
-        author: user.toProfileJSON()
+        author: user.toProfileJSON(),
+        image: this.image
     }
 }
 model('Post', postSchema)

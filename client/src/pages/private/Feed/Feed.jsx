@@ -3,6 +3,7 @@ import Post from './components/Post'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import Spinner from '../../../components/Spinner'
+import { FaUserAlt } from 'react-icons/fa'
 import { usePostContext } from './context/postContext'
 function Feed() {
     const user = useSelector(state => state.user)
@@ -24,9 +25,9 @@ function Feed() {
         <div className=' h-min w-full flex overflow-hidden justify-center'>
             <div className=" hidden mb-4 min-w-max h-min rounded-lg bg-slate-50 overflow-hidden shadow-lg md:flex flex-col items-center p-4">
                 {
-                    !user.img ? <div className='bg-slate-200 rounded-full w-20 h-20'></div> :
+                    !user.image ? <div className='bg-slate-200 p-4 rounded-full '><FaUserAlt className='w-10 h-10' /></div> :
                         <div className=" w-20 h-20 rounded-full">
-                            <img src={user.img} alt="UserImage" />
+                            <img src={user.image} alt="UserImage" />
                         </div>
                 }
                 <h3>{user.userName}</h3>
