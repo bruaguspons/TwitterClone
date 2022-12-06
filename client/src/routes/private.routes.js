@@ -1,3 +1,4 @@
 export default {
-    "PRIVATE": "/private"
+    "PRIVATE": "private",
+    "FEED": "feed"
 }

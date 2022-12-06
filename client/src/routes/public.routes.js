@@ -1,3 +1,4 @@
 export default {
-    "LOGIN": '/login'
+    "LOGIN": '/login',
+    "SINGUP": '/singup',
 }
