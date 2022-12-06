@@ -16,7 +16,7 @@ function PostInfo() {
     const refContent = useRef()
 
     const [post, setPost] = useState({})
-    const [commetns, setComments] = useState({})
+    const [comments, setComments] = useState({})
     const [loading, setLoading] = useState({
         post: true,
         comment: true
@@ -53,7 +53,10 @@ function PostInfo() {
             },
             body: JSON.stringify({ content: refContent.current.value })
         })
-        const data = await res.json()
+        if (res.status === 200) {
+            e.target.reset()
+            getSinglePost()
+        }
     }
     return (
         <div className='pb-4'>
@@ -66,8 +69,8 @@ function PostInfo() {
                 {
                     loading.comment ? <Spinner /> :
 
-                        commetns.count ?
-                            commetns.comments.map(comment => (
+                        comments.count ?
+                            comments.comments.map(comment => (
                                 <Comment key={comment.id} comment={comment} />
                             )) :
                             <span>No Comments</span>

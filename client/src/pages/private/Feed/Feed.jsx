@@ -3,16 +3,17 @@ import Post from './components/Post'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import Spinner from '../../../components/Spinner'
+import { usePostContext } from './context/postContext'
 function Feed() {
     const user = useSelector(state => state.user)
-    const [posts, setPosts] = useState({})
+    const { posts, setPosts } = usePostContext()
     const [loading, setLoading] = useState(true)
+
     const getFeed = async () => {
         const res = await fetch('http://localhost:8000/posts/feed', {
             headers: { 'Authorization': `Bearer ${user.token}` }
         })
         const data = await res.json()
-        console.log(data)
         setPosts(data)
         setLoading(false)
     }
@@ -37,9 +38,10 @@ function Feed() {
             <div>
                 {
                     loading ? <Spinner /> :
-                        posts.post.map(post => (
-                            <Post key={post.slug} post={post} />
-                        ))
+                        Object.keys(posts?.post).length > 0 ?
+                            posts.post.map(post => (
+                                <Post key={post.slug} post={post} />
+                            )) : <span>No Post</span>
 
                 }
             </div>

@@ -24,9 +24,11 @@ function Navbar() {
                 {/* Navbar */}
                 <nav className="hidden md:ml-auto md:flex flex-wrap items-center justify-center text-base tracking-wide font-bold">
                     <button className="py-2 px-4 mx-1 rounded-lg hover:text-sky-500 hover:bg-slate-200" onClick={() => {
+                        setIsOpen(false)
                         navigate(privateRoutes.CREATEPOST)
                     }}>New Post</button>
                     <button className="py-2 px-4 mx-1 rounded-lg hover:text-sky-500 hover:bg-slate-200" onClick={() => {
+                        setIsOpen(false)
                         dispatcher(resetUser())
                         navigate('/')
                     }}>Log Out</button>
@@ -51,10 +53,12 @@ function Navbar() {
                 <div className="absolute z-50 w-full flex flex-col py-4 px-3 md:hidden bg-sky-500 text-base uppercase text-center font-semibold">
                     <a href="#link" className="block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-sky-400">Profile</a>
                     <button href="#link" className="block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-sky-400" onClick={() => {
+                        setIsOpen(false)
                         navigate(privateRoutes.CREATEPOST)
                     }}>New Post</button>
                     <a href="#link" className="block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-sky-400">Search</a>
                     <button className="block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-sky-400" onClick={() => {
+                        setIsOpen(false)
                         dispatcher(resetUser())
                         navigate('/')
                     }}>Log Out</button>

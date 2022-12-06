@@ -1,17 +1,41 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import privateRoutes from '../../../../routes/private.routes'
 import { getDateDiff, getDay } from '../../../../utils/getDate'
-
+import { FaTrash } from 'react-icons/fa'
+import { usePostContext } from '../context/postContext'
 function Post({ post }) {
+    const { posts, setPosts } = usePostContext()
+    const user = useSelector(state => state.user)
     const navigate = useNavigate()
+
+    const handleDelete = async () => {
+        const res = await fetch(`http://localhost:8000/posts/${post.slug}`, {
+            method: "DELETE",
+            headers: { 'Authorization': `Bearer ${user.token}` }
+        })
+        // const data = await res.json()
+        // console.log(data)
+        if (res.status === 204) {
+            const rest = {
+                count: posts.count - 1,
+                post: posts.post.filter(postOld => postOld.slug !== post.slug)
+            }
+            posts.count
+            setPosts(rest)
+            navigate('/')
+        }
+    }
+
     return (
         <div className=" mx-4 mb-4"> {/* Card container */}
-            <div className="h-full rounded-lg bg-slate-50 overflow-hidden shadow-lg px-4">
+            <div className="h-full rounded-lg bg-slate-50 overflow-hidden shadow-lg px-4 relative">
 
-
-                {/* :CARD CATEGORY */}
-                <h2 className="pt-4 pb-1 inline-block title-font text-xs font-bold text-sky-400 uppercase tracking-widest cursor-pointer hover:font-bold">My Category</h2>
+                {
+                    post.author.userName === user.userName &&
+                    <button onClick={handleDelete} className='absolute m-2 right-0 text-cyan-400 border-2 p-1 border-cyan-400 rounded-full hover:bg-red-500 hover:border-red-500 hover:text-slate-50'><FaTrash /></button>
+                }
 
 
                 <p className="py-1 line-clamp-6 mb-3 overflow-hidden leading-relaxed text-gray-000 cursor-pointer">{post?.content || ''}</p>

@@ -113,10 +113,11 @@ route.post('/:post/comments', async (req, res, next) => {
     await comment.save()
     req.post.comments.push(comment._id)
     await req.post.save()
-    return res.json({ comment: comment.toJSON() })
+    return res.json({ comment: await comment.toJSON() })
 })
 // delete comment
 route.delete('/:post/comments/:comment', async (req, res, next) => {
+    const authChecking = auth.requireToken(req)
     if (!authChecking) return res.status(404).json({ 'errors': "Invalid token" })
 
     const { id } = authChecking
@@ -131,4 +132,25 @@ route.delete('/:post/comments/:comment', async (req, res, next) => {
     }
 })
 
+route.delete('/:post', async (req, res, next) => {
+    try {
+        const authChecking = auth.requireToken(req)
+        if (!authChecking) return res.status(404).json({ 'errors': "Invalid token" })
+
+        const { id } = authChecking
+        if (req.post.author.toString() === id.toString()) {
+
+            for (const commentId of req.post.comments) {
+                await Comment.findOne({ _id: commentId }).remove()
+            }
+
+            await req.post.remove()
+            return res.sendStatus(204)
+        } else[
+            res.sendStatus(404)
+        ]
+    } catch (error) {
+        next(error)
+    }
+})
 module.exports = route
