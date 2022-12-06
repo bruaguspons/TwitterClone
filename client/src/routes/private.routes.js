@@ -1,4 +1,6 @@
 export default {
     "PRIVATE": "private",
-    "FEED": "feed"
+    "FEED": "feed",
+    "CREATEPOST": "create-post",
+    "POST": "post",
 }

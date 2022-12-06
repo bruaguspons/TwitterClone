@@ -1,3 +1,4 @@
+const User = require('mongoose').model('User')
 const { Schema, model } = require('mongoose')
 const ObjectId = Schema.Types.ObjectId
 const commentSchema = new Schema({
@@ -9,12 +10,13 @@ const commentSchema = new Schema({
     versionKey: false
 })
 
-commentSchema.methods.toJSONFor = function () {
+commentSchema.methods.toJSON = async function () {
+    const author = await User.findById(this.author)
     return {
         id: this._id,
         content: this.content,
         createdAt: this.createdAt,
-        author: this.author.toProfileJSON()
+        author: author.toProfileJSON()
     };
 };
 

@@ -8,7 +8,7 @@ const postSchema = new Schema({
     content: String,
     favoritesCount: { type: Number, default: 0 },
     tagList: [String],
-    comments: { type: ObjectId, ref: 'Comment' },
+    comments: [{ type: ObjectId, ref: 'Comment' }],
     authorName: String,
     author: { type: ObjectId, ref: 'User' },
 }, {

@@ -52,7 +52,9 @@ route.get('/feed', async (req, res, next) => {
     if (!user) return res.sendStatus(404)
     const offset = req.query.offset ?? 0
     const limit = req.query.limit ?? 20
-    const posts = await Post.find({ author: { $in: user.following } }).skip(Number(offset)).limit(Number(limit)).sort({ createdAt: 'desc' })
+    const authores = [...user.following, user._id]
+
+    const posts = await Post.find({ author: { $in: authores } }).skip(Number(offset)).limit(Number(limit)).sort({ createdAt: 'desc' })
 
     const resu = []
     for (const post of posts) {
@@ -104,10 +106,13 @@ route.post('/:post/comments', async (req, res, next) => {
 
     const { id } = authChecking
     const user = await User.findById(id)
-    const comment = await Comment(req.body.comment)
+    const comment = await Comment(req.body)
+    console.log(comment)
     comment.author = user._id
     comment.post = req.post._id
     await comment.save()
+    req.post.comments.push(comment._id)
+    await req.post.save()
     return res.json({ comment: comment.toJSON() })
 })
 // delete comment

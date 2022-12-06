@@ -18,10 +18,10 @@ route.get('', async (req, res, next) => {
 
 route.post('', async (req, res, next) => {
     try {
-        const { userName, email, password } = req.body.user
-        console.log(userName, email, password)
+        const { userName, email, password1, password2 } = req.body.user
+        if (password1 !== password2) return res.status(400).json({ 'password': "the passwords are not the same" })
         const user = await User({ userName, email })
-        await user.setPassword(password)
+        await user.setPassword(password1)
         await user.save()
 
         return res.json({ user: user.toAuthJSON() })
