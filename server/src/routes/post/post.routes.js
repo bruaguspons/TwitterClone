@@ -127,6 +127,18 @@ route.post('/:post/comments', async (req, res, next) => {
     await req.post.save()
     return res.json({ comment: await comment.toJSON() })
 })
+
+route.post('/:post/favorite', async (req, res, next) => {
+    const authChecking = auth.requireToken(req)
+    if (!authChecking) return res.status(404).json({ 'errors': "Invalid token" })
+
+    const { id } = authChecking
+    res.json({ likes: req.post.likes(id) })
+})
+
+
+
+
 // delete comment
 route.delete('/:post/comments/:comment', async (req, res, next) => {
     const authChecking = auth.requireToken(req)

@@ -2,6 +2,18 @@ const auth = require('../../auth')
 const User = require('mongoose').model('User')
 const route = require('express').Router()
 
+route.get('/random', async (req, res, next) => {
+    const users = await User.find()
+    const query = []
+    const count = users.length < 3 ? users.length : 3
+    for (let i = 0; i < count; i++) {
+        const random = Math.floor(Math.random() * count)
+        const user = users[random]
+        users.splice(random, 1)
+        query.push(user.toProfileJSON())
+    }
+    return res.json({ users: query })
+})
 route.param('userName', async (req, res, next, userName) => {
     try {
         const user = await User.findOne({ userName })
@@ -22,6 +34,7 @@ route.get('/:userName', async (req, res, next) => {
     if (!user) return res.json({ profile: req.profile.toProfileJSON(false) })
     return res.json({ profile: req.profile.toProfileJSON(user) });
 })
+
 
 route.post('/follow/:userName', async (req, res, next) => {
     const authChecking = auth.requireToken(req)

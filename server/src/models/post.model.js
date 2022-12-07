@@ -6,7 +6,7 @@ const ObjectId = Schema.Types.ObjectId
 const postSchema = new Schema({
     slug: { type: String, unique: true, requiredL: true, lowercase: true },
     content: String,
-    favoritesCount: { type: Number, default: 0 },
+    favorire: [{ type: ObjectId, ref: 'User' }],
     tagList: [String],
     comments: [{ type: ObjectId, ref: 'Comment' }],
     authorName: String,
@@ -23,6 +23,17 @@ postSchema.pre('validate', function (next) {
     next()
 })
 
+postSchema.methods.likes = function (id) {
+    if (this.favorire.some(idFavorite => idFavorite.equals(id))) {
+        this.favorire = this.favorire.filter(idFavorite => !idFavorite.equals(id))
+    } else {
+        this.favorire.push(id)
+    }
+
+    this.save()
+    return this.favorire
+}
+
 postSchema.methods.toJSON = async function () {
     const user = await User.findById(this.author)
     return {
@@ -32,7 +43,7 @@ postSchema.methods.toJSON = async function () {
         updatedAt: this.updatedAt,
         tagList: this.tagList,
         // favorited: user ? user.isFavorite(this._id) : false,
-        favoritesCount: this.favoritesCount,
+        favorire: this.favorire,
         author: user.toProfileJSON(),
         image: this.image
     }

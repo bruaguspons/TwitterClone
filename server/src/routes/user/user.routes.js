@@ -2,6 +2,17 @@ const auth = require('../../auth')
 const User = require('mongoose').model('User')
 const route = require('express').Router()
 
+const multer = require('multer')
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images/')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname)
+    },
+})
+const update = multer({ storage: storage })
+
 route.get('', async (req, res, next) => {
     if (!auth.requireToken(req)) return res.status(404).json({ 'errors': "Invalid token" })
 
@@ -45,30 +56,33 @@ route.post('/login', async (req, res, next) => {
     return res.json({ user: data })
 })
 
-route.put('', async (req, res, next) => {
+route.put('', update.single('file'), async (req, res, next) => {
     const authChecking = auth.requireToken(req)
     if (!authChecking) return res.status(404).json({ 'errors': "Invalid token" })
 
     const { id } = authChecking
-    const { userName, email, password, bio, img } = req.body.user
     try {
         const user = await User.findById(id)
+        if (req.body.content) {
+            const { userName, email, password, bio } = JSON.parse(req.body.content).user
 
-        if (userName) {
-            user.userName = userName
+            if (userName) {
+                user.userName = userName
+            }
+            if (email) {
+                user.email = email
+            }
+            if (bio) {
+                user.bio = bio
+            }
+            if (password) {
+                await user.setPassword(password)
+            }
         }
-        if (email) {
-            user.email = email
+        if (req.file?.path) {
+            user.image = req.file?.path
         }
-        if (bio) {
-            user.bio = bio
-        }
-        if (img) {
-            user.img = img
-        }
-        if (password) {
-            await user.setPassword(password)
-        }
+
         await user.save()
         return res.json({ "user": user.toAuthJSON() })
     } catch (error) {

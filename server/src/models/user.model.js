@@ -23,7 +23,7 @@ const userSchema = new Schema({
     },
     hash: String,
     bio: String,
-    img: String,
+    image: String,
     favorite: [{ type: ObjectId, ref: 'Post' }],
     following: [{ type: ObjectId, ref: 'User' }],
 }, {
@@ -52,7 +52,8 @@ userSchema.methods.toAuthJSON = function () {
         email: this.email,
         token: this.generateJWT(),
         bio: this.bio,
-        image: this.image
+        image: this.image,
+        id: this._id
     };
 }
 
