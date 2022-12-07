@@ -1,19 +1,10 @@
-const auth = require('../../auth')
+
 const User = require('mongoose').model('User')
 const route = require('express').Router()
+const { unFollowUser } = require('./controllers/profile.delete')
+const { getRandomUsers, getSingleUser } = require('./controllers/profile.get')
+const { followUser } = require('./controllers/profile.post')
 
-route.get('/random', async (req, res, next) => {
-    const users = await User.find()
-    const query = []
-    const count = users.length < 5 ? users.length : 5
-    for (let i = 0; i < count; i++) {
-        const random = Math.floor(Math.random() * count)
-        const user = users[random]
-        users.splice(random, 1)
-        query.push(user.toProfileJSON())
-    }
-    return res.json({ users: query })
-})
 route.param('userName', async (req, res, next, userName) => {
     try {
         const user = await User.findOne({ userName })
@@ -24,38 +15,15 @@ route.param('userName', async (req, res, next, userName) => {
         next(error)
     }
 })
+// get randoms users
+route.get('/random', getRandomUsers)
+// getSingle User
+route.get('/:userName', getSingleUser)
 
-route.get('/:userName', async (req, res, next) => {
-    const authChecking = auth.requireToken(req)
-    if (!authChecking) return res.status(404).json({ 'errors': "Invalid token" })
+// follow Someone
+route.post('/follow/:userName', followUser)
 
-    const { id } = authChecking
-    const user = await User.findById(id)
-    if (!user) return res.json({ profile: req.profile.toProfileJSON(false) })
-    return res.json({ profile: req.profile.toProfileJSON(user) });
-})
-
-
-route.post('/follow/:userName', async (req, res, next) => {
-    const authChecking = auth.requireToken(req)
-    if (!authChecking) return res.status(404).json({ 'errors': "Invalid token" })
-
-    const { id } = authChecking
-    const user = await User.findById(id)
-    if (!user) return res.json({ profile: req.profile.toProfileJSON(false) })
-    await user.follow(req.profile._id)
-    return res.json({ profile: req.profile.toProfileJSON(user) });
-})
-
-route.delete('/follow/:userName', async (req, res, next) => {
-    const authChecking = auth.requireToken(req)
-    if (!authChecking) return res.status(404).json({ 'errors': "Invalid token" })
-
-    const { id } = authChecking
-    const user = await User.findById(id)
-    if (!user) return res.json({ profile: req.profile.toProfileJSON(false) })
-    await user.unfollow(req.profile._id)
-    return res.json({ profile: req.profile.toProfileJSON(user) });
-})
+// unFollow User
+route.delete('/follow/:userName', unFollowUser)
 
 module.exports = route

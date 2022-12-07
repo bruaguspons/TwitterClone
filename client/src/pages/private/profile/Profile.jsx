@@ -163,7 +163,7 @@ function Profile() {
                 userPro.userName !== user.userName && !userPro.following && <div className='mt-3' onClick={handleFollow}><Button text={"Follow"} /></div>
             }
             {
-                userPro.userName !== user.userName && userPro.following && <div className='mt-3' onClick={handleFollow}><Button colorButton={"red-500"} text={"UnFollow"} /></div>
+                userPro.userName !== user.userName && userPro.following && <div className='mt-3' onClick={handleFollow}><Button colorButton={"red"} text={"UnFollow"} /></div>
             }
         </div>
     )
