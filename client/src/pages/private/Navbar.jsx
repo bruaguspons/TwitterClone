@@ -4,9 +4,10 @@ import LogoTwitter from '../../components/LogoTwitter'
 import privateRoutes from '../../routes/private.routes'
 import { FaUserAlt } from 'react-icons/fa'
 import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { resetUser } from '../../redux/state/userSlice'
 function Navbar() {
+    const user = useSelector(state => state.user)
     const dispatcher = useDispatch()
     const navigate = useNavigate()
     const [isOpen, setIsOpen] = useState(false)
@@ -34,7 +35,10 @@ function Navbar() {
                     }}>Log Out</button>
                 </nav>
 
-                <button className="hidden sm:inline-flex ml-auto md:ml-0 mr-4 md:mr-0 cursor-pointer border-4 rounded-full p-1" title='Profile'>
+                <button className="hidden sm:inline-flex ml-auto md:ml-0 mr-4 md:mr-0 cursor-pointer border-4 rounded-full p-1" title='Profile' onClick={() => {
+                    setIsOpen(false)
+                    navigate(`${privateRoutes.PROFILE}/${user.userName}`)
+                }}>
                     <FaUserAlt />
                 </button>
 

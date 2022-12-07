@@ -34,14 +34,18 @@ function Feed() {
         getRandomUsers()
         getFeed()
     }, [])
-
+    const image = user.image
+    const url = image?.startsWith('http') ? user.image : `http://localhost:8000/${user.image}`
     return (
         <div className=' h-min w-full flex overflow-hidden justify-center'>
             <div className=" hidden mb-4 min-w-max h-min rounded-lg bg-slate-50 overflow-hidden shadow-lg md:flex flex-col items-center p-4">
-                {
-                    !user.image ? <div className='bg-slate-200 p-4 rounded-full '><FaUserAlt className='w-10 h-10' /></div> :
-                        <img className='w-20 h-20 rounded-full' src={`http://localhost:8000/${user.image}`} alt="UserImage" />
-                }
+                <button onClick={() => navigate(`/${privateRoutes.PRIVATE}/${privateRoutes.PROFILE}/${user.userName}`, { replace: true })}>
+                    {
+
+                        !user.image ? <div className='bg-slate-200 p-4 rounded-full '><FaUserAlt className='w-10 h-10' /></div> :
+                            <img className='w-20 h-20 rounded-full' src={url} alt="UserImage" />
+                    }
+                </button>
                 <h3>{user.userName}</h3>
                 <h4>{user.email}</h4>
                 <p>{user.bio || "you don't have an bio"}</p>
@@ -52,7 +56,12 @@ function Feed() {
                         Object.keys(posts?.post).length > 0 ?
                             posts.post.map(post => (
                                 <Post key={post.slug} post={post} />
-                            )) : <span>No Post</span>
+                            )) :
+                            <div className='text-center p-4'>
+                                <span className=''>No Posts.</span>
+                                <br />
+                                <span>Plase Follow someone to see posts</span>
+                            </div>
 
                 }
             </div>

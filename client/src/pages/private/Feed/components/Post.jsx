@@ -47,6 +47,10 @@ function Post({ post }) {
             navigate('/')
         }
     }
+    const image = post.image
+    const urlPost = image?.startsWith('http') ? image : `http://localhost:8000/${image}`
+    const imageUser = post.author.image
+    const urlUser = image?.startsWith('http') ? imageUser : `http://localhost:8000/${imageUser}`
 
     return (
         <div className=" mx-4 mb-4"> {/* Card container */}
@@ -60,7 +64,7 @@ function Post({ post }) {
 
                 <button className='flex my-3 items-center gap-3' onClick={() => navigate(`/${privateRoutes.PRIVATE}/${privateRoutes.PROFILE}/${post.author.userName}`, { replace: true })}>
                     {
-                        post.author.image ? <img className='w-12 h-12 md:w-10 md:h-10 rounded-full' src={`http://localhost:8000/${post.author.image}`} alt="" /> :
+                        post.author.image ? <img className='w-12 h-12 md:w-10 md:h-10 rounded-full' src={urlUser} alt="" /> :
                             <div className='bg-slate-200 p-3 rounded-full'><FaUserAlt className='w-8 h-8 md:w-5 md:h-5  ' /></div>
                     }
                     <span>{post.author.userName}</span>
@@ -71,7 +75,7 @@ function Post({ post }) {
 
                 <p className="py-1 line-clamp-6 mb-3 overflow-hidden leading-relaxed text-gray-000 cursor-pointer">{post?.content || ''}</p>
                 {
-                    post.image && <img className="lg:h-48 md:h-44 w-full object-scale-down object-center" src={`http://localhost:8000/${post.image}`} alt="Post-Image" />
+                    post.image && <img className="lg:h-48 md:h-44 w-full object-scale-down object-center" src={urlPost} alt="Post-Image" />
                 }
 
                 {/* :CARD FOOTER */}

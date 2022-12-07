@@ -87,12 +87,14 @@ function Profile() {
     useEffect(() => {
         getUserProfile()
     }, [])
+    const image = userPro.image
+    const url = image?.startsWith('http') ? image : `http://localhost:8000/${image}`
     return (
         <div className='w-full flex flex-col items-center'>
             {/* Image User */}
             {
                 !userPro.image ? <div className='bg-slate-200 p-4 rounded-full border-2 border-black w-min h-min '><FaUserAlt className='w-10 h-10' /></div> :
-                    <img className=' object-cover w-20 h-20 rounded-full border-4 border-black' src={`http://localhost:8000/${userPro.image}`} alt="UserImage" />
+                    <img className=' object-cover w-20 h-20 rounded-full border-4 border-black' src={url} alt="UserImage" />
             }
             {
                 !edit.image ? userPro.userName === user.userName && <button className='flex items-center' onClick={() => {
